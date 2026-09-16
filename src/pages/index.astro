@@ -1,0 +1,198 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'mat — My AI Team';
+const description =
+  'mat is a tmux-based framework for running structured AI-agent sessions against a GitHub repo. Agents claim ready tickets, implement, open PRs, and merge them themselves.';
+
+const frictions = [
+  {
+    heading: 'No babysitting terminals',
+    body: 'Every session runs async. You drive it remotely over a two-way Telegram relay instead of watching a pane.',
+  },
+  {
+    heading: 'No manual handoff',
+    body: 'Agents pass work to each other through GitHub issues and labels, not copy-paste. Claiming a ticket swaps its ready label for assigned_to:<lock>.',
+  },
+  {
+    heading: 'No single-agent bottleneck',
+    body: 'Investigation, implementation, and review split across session modes and parallel backend slots.',
+  },
+];
+
+const producing = [
+  { name: 'explore', body: 'Investigate a question and crystallise a ticket. One agent, read-only.' },
+  { name: 'caucus', body: 'A proposer and a challenger deliberate one topic down to tickets.' },
+  { name: 'audit', body: 'A self-arming cadence auditor reviews merged work and files triage tickets.' },
+];
+
+const delivering = [
+  { name: 'live', body: 'Hands-on work in the current directory: direct operations, or the quick patch workflow.' },
+  { name: 'adhoc', body: 'One agent runs the full cycle: claim, implement, PR, merge, notify.' },
+  { name: 'duo', body: 'Two-agent relay — a dev plans and implements, an independent reviewer gates and merges.' },
+  { name: 'team', body: 'Three-agent relay — planner to dev to reviewer, for stricter role isolation.' },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <Nav />
+  <main class="flex-1">
+    <!-- Hero -->
+    <section class="mx-auto max-w-5xl px-6 pt-14 pb-16">
+      <p class="text-sm font-semibold uppercase tracking-wider text-muted">My AI Team</p>
+      <h1 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-ink">
+        Your backlog, delivered while you are elsewhere.
+      </h1>
+      <p class="mt-5 max-w-2xl text-xl sm:text-2xl font-medium text-accent">
+        mat runs structured AI-agent sessions against your GitHub repo — agents claim ready
+        tickets, implement on a branch, open PRs, and merge them themselves.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg text-muted leading-relaxed">
+        A tmux-based framework for solo developers and small teams. You set direction and step in
+        on decisions and blockers; the routine review-and-merge loop is the agents' job.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="#install"
+          class="inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+          >Install mat</a
+        >
+        <a
+          href="https://mat-docs.shukelabs.com"
+          class="inline-flex items-center rounded-lg border border-line px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-surface-soft"
+          >Read the docs</a
+        >
+      </div>
+    </section>
+
+    <!-- What it fixes -->
+    <section class="border-y border-line bg-surface-soft">
+      <div class="mx-auto max-w-5xl px-6 py-14">
+        <h2 class="text-2xl font-bold text-ink">What it fixes</h2>
+        <p class="mt-3 max-w-2xl text-muted">
+          Three friction points surface once you use coding agents regularly. mat is built around
+          removing them.
+        </p>
+        <div class="mt-8 grid gap-5 sm:grid-cols-3">
+          {
+            frictions.map((item) => (
+              <div class="rounded-2xl border border-line bg-surface p-6">
+                <h3 class="font-semibold text-ink">{item.heading}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Session modes -->
+    <section id="modes" class="mx-auto max-w-5xl px-6 py-14">
+      <h2 class="text-2xl font-bold text-ink">Session modes</h2>
+      <p class="mt-3 max-w-2xl text-muted">
+        Work splits along one seam: producing tickets versus delivering them. GitHub issues and
+        labels are the membrane between the two sides.
+      </p>
+      <div class="mt-8 grid gap-8 sm:grid-cols-2">
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-muted">
+            Produce tickets — never delivery code
+          </h3>
+          <dl class="mt-4 space-y-4">
+            {
+              producing.map((mode) => (
+                <div class="rounded-xl border border-line p-5">
+                  <dt class="font-mono text-sm font-semibold text-accent">{mode.name}</dt>
+                  <dd class="mt-1.5 text-sm leading-relaxed text-muted">{mode.body}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-muted">
+            Deliver — branch, PR, merge
+          </h3>
+          <dl class="mt-4 space-y-4">
+            {
+              delivering.map((mode) => (
+                <div class="rounded-xl border border-line p-5">
+                  <dt class="font-mono text-sm font-semibold text-accent">{mode.name}</dt>
+                  <dd class="mt-1.5 text-sm leading-relaxed text-muted">{mode.body}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- Install / getting started -->
+    <section id="install" class="border-y border-line bg-surface-soft">
+      <div class="mx-auto max-w-5xl px-6 py-14">
+        <h2 class="text-2xl font-bold text-ink">Install</h2>
+        <p class="mt-3 max-w-2xl text-muted">
+          A purchase gives you a license key and the bootstrap download; the quickstarts in the
+          docs cover install, activation, and the Telegram loop. From a source checkout:
+        </p>
+        <pre class="term mt-6"><code>git clone https://github.com/shukebeta/my-ai-team ~/src/my-ai-team
+~/src/my-ai-team/install.sh</code></pre>
+        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
+          <code>install.sh</code> copies a frozen runtime into
+          <code>~/.local/share/my-ai-team</code>, links the relay commands into
+          <code>~/.local/bin</code>, installs <code>notify-user</code>, and registers the resident
+          Telegram relay for your platform — a systemd user unit on Linux, a LaunchAgent on macOS,
+          a Run key entry on Windows Git Bash.
+        </p>
+
+        <h3 class="mt-10 text-lg font-semibold text-ink">Quick start</h3>
+        <p class="mt-2 max-w-2xl text-muted">
+          <code>cd</code> into any git repo and pick an entry point. Each mode opens its own tmux
+          session; re-run the same command to reattach.
+        </p>
+        <pre class="term mt-5"><code>explore   # investigate a question, crystallise a ticket
+caucus    # proposer + challenger deliberate one topic
+audit     # auditor for merged work in this repo
+live      # hands-on work in the current directory
+adhoc     # claim a ticket, implement, open a PR, merge, notify
+duo       # dev + independent reviewer
+team      # planner -> dev -> reviewer</code></pre>
+        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
+          Pass a backend name to select a non-default AI (<code>explore codex</code>,
+          <code>duo codex</code>). Add <code>-n</code> to start a session cold and wake it later.
+        </p>
+      </div>
+    </section>
+
+    <!-- Next steps -->
+    <section class="mx-auto max-w-5xl px-6 py-14">
+      <h2 class="text-2xl font-bold text-ink">Next steps</h2>
+      <div class="mt-6 grid gap-5 sm:grid-cols-3">
+        <a
+          href="https://mat-docs.shukelabs.com"
+          class="rounded-2xl border border-line p-6 transition-colors hover:bg-surface-soft"
+        >
+          <h3 class="font-semibold text-ink">Documentation</h3>
+          <p class="mt-2 text-sm text-muted">Quickstarts, session protocols, FAQ.</p>
+        </a>
+        <a
+          href="https://shukelabs.com/products/my-ai-team/"
+          class="rounded-2xl border border-line p-6 transition-colors hover:bg-surface-soft"
+        >
+          <h3 class="font-semibold text-ink">Pricing &amp; license</h3>
+          <p class="mt-2 text-sm text-muted">Plans, device limits, and the buy button.</p>
+        </a>
+        <a
+          href="https://shukelabs.com"
+          class="rounded-2xl border border-line p-6 transition-colors hover:bg-surface-soft"
+        >
+          <h3 class="font-semibold text-ink">SHUKE Labs</h3>
+          <p class="mt-2 text-sm text-muted">The rest of what we build, and the blog.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Page not found';
+const description = "The page you're looking for doesn't exist or has moved.";
+---
+
+<BaseLayout title={title} description={description}>
+  <Nav />
+  <main class="flex-1">
+    <article class="mx-auto max-w-3xl px-6 pt-10 pb-16">
+      <p class="text-sm font-semibold text-muted">404</p>
+      <h1 class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-ink">Page not found</h1>
+      <p class="mt-6 leading-relaxed text-muted">
+        The page you're looking for doesn't exist or has moved. Head back to the
+        <a class="text-accent underline underline-offset-2 hover:text-accent-hover" href="/">home page</a>,
+        or read the
+        <a class="text-accent underline underline-offset-2 hover:text-accent-hover" href="https://mat-docs.shukelabs.com">documentation</a>.
+      </p>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>
