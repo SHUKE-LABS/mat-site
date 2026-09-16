@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 
-const title = 'mat — My AI Team';
+// The layout appends ` | mat` to any page title; the home page wants the bare
+// site title, so it passes none.
 const description =
   'mat is a tmux-based framework for running structured AI-agent sessions against a GitHub repo. Agents claim ready tickets, implement, open PRs, and merge them themselves.';
 
@@ -36,7 +37,7 @@ const delivering = [
 ];
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout description={description}>
   <Nav />
   <main class="flex-1">
     <!-- Hero -->
