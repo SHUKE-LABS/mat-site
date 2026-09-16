@@ -1,8 +1,12 @@
 name: Deploy site
 
-# Build and verify on every pull request; publish only after a trusted main
-# push has passed that same verification. Mirrors the mat-docs precedent
+# Verify, then publish only what a trusted `main` ref has verified. Pull
+# requests are covered by ci.yml, which runs the same check + build without any
+# access to the Cloudflare secrets. Mirrors the mat-docs precedent
 # (SHUKE-LABS/my-ai-team-docs .github/workflows/docs-deploy.yml).
+# `workflow_dispatch` exists to re-publish main on demand; the deploy job is
+# ref-gated below, so a dispatch from any other branch verifies but never
+# publishes.
 on:
   push:
     branches: [main]
@@ -41,6 +45,10 @@ jobs:
 
   deploy:
     needs: verify
+    # Production is `main` and nothing else. Without this the workflow_dispatch
+    # trigger would hand any branch's artifact, plus the Cloudflare secrets, to
+    # a production deploy.
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
