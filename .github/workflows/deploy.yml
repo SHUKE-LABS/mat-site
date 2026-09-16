@@ -1,0 +1,85 @@
+name: Deploy site
+
+# Build and verify on every pull request; publish only after a trusted main
+# push has passed that same verification. Mirrors the mat-docs precedent
+# (SHUKE-LABS/my-ai-team-docs .github/workflows/docs-deploy.yml).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Type check
+        run: npm run check
+      - name: Build site
+        run: npm run build
+      - name: Upload verified site
+        uses: actions/upload-artifact@v4
+        with:
+          name: mat-site-dist-${{ github.sha }}
+          path: dist
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      # A missing Cloudflare secret is a credential regression, not an
+      # unprovisioned repository. Fail loudly rather than skipping the deploy
+      # step, so a green `deploy` job always means the site was published.
+      - name: Require Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${CLOUDFLARE_API_TOKEN:-}" || -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+            echo 'CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are required to deploy mat-site.' >&2
+            echo 'Provision both repository secrets, then re-run this workflow.' >&2
+            exit 1
+          fi
+      # wrangler-action resolves the package manager from package.json, so the
+      # deploy job needs the same Node toolchain and install as `verify`.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Download verified site
+        uses: actions/download-artifact@v4
+        with:
+          name: mat-site-dist-${{ github.sha }}
+          path: dist
+      # wranglerVersion matches the `wrangler` devDependency pin in
+      # package.json so the action uses the frozen install instead of mutating
+      # the manifest at deploy time; keep the two in sync.
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.129.0'
+          command: pages deploy dist --project-name=mat-site --branch=main

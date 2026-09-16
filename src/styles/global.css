@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Design tokens — shared with shukelabs.com so the two surfaces read as one
+   family: single accent, neutral ink, light only (no dark mode). */
+@theme {
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+  --color-accent-soft: #eef2ff;
+  --color-ink: #111827;
+  --color-muted: #4b5563;
+  --color-line: #e5e7eb;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f9fafb;
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-surface);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Monospace lives only in code contexts. */
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  /* Terminal blocks: install and quick-start commands. */
+  .term {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+}
