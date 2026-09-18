@@ -1,0 +1,66 @@
+name: Checkout link guard
+
+# Catches LEMONSQUEEZY_CHECKOUT link death. `push` to `main` catches URL
+# changes landing on main; the weekly `schedule` catches external link
+# death between PRs — GitHub emails the workflow actor on scheduled
+# failure, which is the alert surface. PR builds are covered by ci.yml's
+# `check` job; no need to run this on pull_request.
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly Monday 06:17 UTC — a low-traffic minute to avoid the
+    # scheduled-workflow herd.
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Extract the URL from src/config/pricing.ts at run time, so a
+      # future value change is reflected automatically and a hardcoded
+      # copy here cannot go stale. The regex matches a string literal
+      # assigned to LEMONSQUEEZY_CHECKOUT across the newline that the
+      # source splits the declaration across.
+      - name: Extract LEMONSQUEEZY_CHECKOUT
+        id: extract
+        run: |
+          url=$(node -e "
+            const fs = require('fs');
+            const ts = fs.readFileSync('src/config/pricing.ts', 'utf8');
+            const match = ts.match(/LEMONSQUEEZY_CHECKOUT\s*=\s*['\"]([^'\"]+)['\"]/);
+            if (!match) {
+              console.error('Could not extract LEMONSQUEEZY_CHECKOUT from src/config/pricing.ts');
+              process.exit(1);
+            }
+            process.stdout.write(match[1]);
+          ")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Extracted LEMONSQUEEZY_CHECKOUT=$url"
+
+      # GET with --location so redirects are followed (LemonSqueezy's
+      # checkout host 302s to a per-product page). --max-time bounds the
+      # wait; --max-redirs caps redirect loops. The job fails on any
+      # non-2xx final status — explicit, no 2xx-or-3xx ambiguity.
+      - name: GET checkout URL
+        env:
+          CHECKOUT_URL: ${{ steps.extract.outputs.url }}
+        run: |
+          set -euo pipefail
+          echo "Probing $CHECKOUT_URL"
+          code=$(curl --silent --show-error --location \
+              --max-time 15 --max-redirs 5 \
+              --output /dev/null --write-out '%{http_code}' \
+              --request GET "$CHECKOUT_URL")
+          echo "Final HTTP status: $code"
+          if [[ "$code" -lt 200 || "$code" -ge 300 ]]; then
+            echo "::error::LEMONSQUEEZY_CHECKOUT ($CHECKOUT_URL) returned HTTP $code"
+            exit 1
+          fi
