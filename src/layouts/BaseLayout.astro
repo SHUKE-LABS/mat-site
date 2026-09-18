@@ -14,7 +14,7 @@ const {
 const siteName = 'mat';
 const fullTitle = title ? `${title} | ${siteName}` : 'mat — My AI Team';
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL('/favicon.svg', Astro.site).href;
+const ogImage = new URL('/share-card.png', Astro.site).href;
 ---
 
 <!doctype html>
@@ -40,9 +40,13 @@ const ogImage = new URL('/favicon.svg', Astro.site).href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body class="min-h-screen flex flex-col">
     <slot />
