@@ -8,11 +8,11 @@ interface Props {
 
 const {
   title,
-  description = 'mat runs structured AI-agent sessions against your GitHub repo: agents claim tickets, implement, open PRs, and merge them themselves.',
+  description = 'My AI Team runs structured AI-agent sessions against your GitHub repo: agents claim tickets, implement, open PRs, and merge them themselves.',
 } = Astro.props;
 
-const siteName = 'mat';
-const fullTitle = title ? `${title} | ${siteName}` : 'mat — My AI Team';
+const siteName = 'My AI Team';
+const fullTitle = title ? `${title} | ${siteName}` : siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/share-card.png', Astro.site).href;
 ---
