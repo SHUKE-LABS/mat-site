@@ -38,13 +38,14 @@ const delivering = [
 ];
 
 // Buyer-facing view of the loop: the six stages a ticket passes through. The
-// plan is reviewed before the build, so the two review stages are distinct.
+// same independent reviewer gates both the plan and the diff; the two review
+// stages differ in when they happen, not in who does them.
 const stages = [
   { name: 'Ticket', note: 'A goal enters the queue — a rough idea, a bug, a feature.' },
   { name: 'Plan', note: 'An agent drafts the approach, naming the real files and steps.' },
   { name: 'Plan review', note: 'An independent reviewer approves the approach before any code is written.' },
   { name: 'Build', note: 'An agent implements the change on its own branch and opens a PR.' },
-  { name: 'Code review', note: 'A different agent reads the diff cold and signs off — or sends it back.' },
+  { name: 'Code review', note: 'The same independent reviewer who approved the plan reads the diff and signs off — or sends it back.' },
   { name: 'Merge', note: 'The change lands, and the queue re-arms for the next ticket.' },
 ];
 
