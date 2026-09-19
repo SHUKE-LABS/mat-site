@@ -36,6 +36,38 @@ const delivering = [
   { name: 'duo', body: 'Two-agent relay — a dev plans and implements, an independent reviewer gates and merges.' },
   { name: 'team', body: 'Three-agent relay — planner to dev to reviewer, for stricter role isolation.' },
 ];
+
+// Buyer-facing view of the loop: the six stages a ticket passes through. The
+// plan is reviewed before the build, so the two review stages are distinct.
+const stages = [
+  { name: 'Ticket', note: 'A goal enters the queue — a rough idea, a bug, a feature.' },
+  { name: 'Plan', note: 'An agent drafts the approach, naming the real files and steps.' },
+  { name: 'Plan review', note: 'An independent reviewer approves the approach before any code is written.' },
+  { name: 'Build', note: 'An agent implements the change on its own branch and opens a PR.' },
+  { name: 'Code review', note: 'A different agent reads the diff cold and signs off — or sends it back.' },
+  { name: 'Merge', note: 'The change lands, and the queue re-arms for the next ticket.' },
+];
+
+// The trust checkpoints that keep the loop honest. Wording ported from
+// shukelabs.com's My AI Team how-it-works page before it redirects here.
+const guardrails = [
+  {
+    heading: 'A plan is approved first',
+    body: 'An independent reviewer signs off on the approach before a line of code is written, so the build starts from an agreed design — not a guess.',
+  },
+  {
+    heading: 'Review is independent',
+    body: 'The agent that reviews the diff is not the one that wrote it, and it re-reads the change with fresh context — so review stays honest instead of rubber-stamping.',
+  },
+  {
+    heading: 'Tests gate the merge',
+    body: 'The suite runs on every change. Green merges; red sends the work back to the builder. Nothing lands on a failing test.',
+  },
+  {
+    heading: 'You decide the direction',
+    body: 'The team resolves what it can on its own and comes to you only for real decisions — product calls, scope, tradeoffs. When agents disagree on design, two of them deliberate to a conclusion instead of escalating.',
+  },
+];
 ---
 
 <BaseLayout description={description}>
@@ -118,6 +150,20 @@ const delivering = [
           ))
         }
       </div>
+      <p class="mt-6 max-w-2xl text-sm text-muted leading-relaxed">
+        Payments are handled by <strong class="font-medium text-ink">LemonSqueezy</strong>, our
+        merchant of record. Your purchase is subject to LemonSqueezy's buyer terms and refund
+        policy, shown at checkout, and to our
+        <a
+          href="https://shukelabs.com/terms#terms-of-sale"
+          class="text-accent underline underline-offset-2 hover:text-accent-hover">terms of sale</a
+        >
+        and
+        <a
+          href="https://shukelabs.com/terms#refund-policy"
+          class="text-accent underline underline-offset-2 hover:text-accent-hover">refund policy</a
+        >.
+      </p>
     </section>
 
     <!-- How it works -->
@@ -136,7 +182,60 @@ const delivering = [
           height="605"
           class="mt-6 mx-auto block h-auto w-full"
         />
-        <p class="mt-4 text-center text-sm">
+
+        <!-- Six-stage concept row: two review stages, not one -->
+        <div class="mt-10">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-muted">The autonomous loop</h3>
+          <div class="mt-6 flex flex-col sm:flex-row sm:flex-wrap sm:items-stretch sm:gap-y-3">
+            {
+              stages.map((stage, i) => (
+                <>
+                  {i > 0 && (
+                    <div
+                      class="flex items-center justify-center py-2 text-2xl text-muted sm:px-3 sm:py-0"
+                      aria-hidden="true"
+                    >
+                      <span class="sm:hidden">↓</span>
+                      <span class="hidden sm:inline">→</span>
+                    </div>
+                  )}
+                  <div class="rounded-2xl border border-line bg-surface p-6 sm:min-w-[10rem] sm:flex-1">
+                    <span class="text-lg font-semibold text-ink">{stage.name}</span>
+                    <p class="mt-2 text-sm text-muted leading-relaxed">{stage.note}</p>
+                  </div>
+                </>
+              ))
+            }
+          </div>
+          <div
+            class="mt-6 flex items-center gap-3 rounded-xl border border-dashed border-line bg-surface p-5"
+          >
+            <span class="text-2xl text-accent" aria-hidden="true">↻</span>
+            <p class="text-sm text-muted leading-relaxed">
+              Each merge re-arms the cycle. The team finishes one ticket and picks up the next
+              without waiting to be re-invoked.
+            </p>
+          </div>
+        </div>
+
+        <!-- Trust checkpoints -->
+        <div class="mt-12">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-muted">
+            Where the guardrails are
+          </h3>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            {
+              guardrails.map((item) => (
+                <div class="rounded-xl border border-line bg-surface p-5">
+                  <h4 class="text-base font-semibold text-ink">{item.heading}</h4>
+                  <p class="mt-2 text-sm text-muted leading-relaxed">{item.body}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <p class="mt-8 text-center text-sm">
           <a href="https://mat-docs.shukelabs.com" class="text-accent hover:underline"
             >Read the documentation for the detailed session modes &rarr;</a
           >
@@ -224,7 +323,7 @@ mat activate &lt;LICENSE_KEY&gt;</code></pre>
           <p class="mt-2 text-sm text-muted">Quickstarts, session protocols, FAQ.</p>
         </a>
         <a
-          href="https://shukelabs.com/products/my-ai-team/"
+          href="/#plans"
           class="rounded-2xl border border-line p-6 transition-colors hover:bg-surface-soft"
         >
           <h3 class="font-semibold text-ink">Pricing &amp; license</h3>

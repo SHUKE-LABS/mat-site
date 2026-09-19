@@ -1,7 +1,6 @@
 // Single source of truth for My AI Team's live plans and LemonSqueezy
-// checkout. The shukelabs.com site mirrors this file by hand, so the two
-// surfaces can drift between syncs. Pages render from these constants so
-// prices, device caps, and links stay in step.
+// checkout. Pages render from these constants so prices, device caps, and
+// links stay in step.
 
 export interface Plan {
   label: string;
