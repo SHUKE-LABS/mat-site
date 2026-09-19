@@ -1,6 +1,6 @@
 # mat-site
 
-Product site for **mat** (My AI Team) — published at
+Product site for **My AI Team** (`my-ai-team`) — published at
 [mat.shukelabs.com](https://mat.shukelabs.com).
 
 Astro + Tailwind static site, deployed to Cloudflare Pages (project `mat-site`)
