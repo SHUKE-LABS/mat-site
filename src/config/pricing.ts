@@ -74,11 +74,7 @@ function wholeMonthsElapsed(now: Date, launch: Date): number {
 }
 
 export function priceCents(now: Date, launchDate: string | Date): number {
-  const launch =
-    typeof launchDate === 'string' ? parseLaunchDate(launchDate) : launchDate;
-  const elapsed = wholeMonthsElapsed(now, launch);
-
-  return Math.min(PRICE_START_CENTS + elapsed * PRICE_STEP_CENTS, PRICE_CAP_CENTS);
+  return priceQuote(now, launchDate).price_cents;
 }
 
 export function priceQuote(now: Date, launchDate: string | Date): PriceQuote {

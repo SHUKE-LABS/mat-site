@@ -184,27 +184,13 @@ const guardrails = [
     </section>
 
     <script>
+      import { formatPrice, formatUtcDate, type PriceQuote } from '../config/pricing';
+
       const currentPrice = document.querySelector('[data-price-current]');
       const nextPrice = document.querySelector('[data-price-next]');
       const nextChange = document.querySelector('[data-price-next-change]');
 
-      type LivePriceQuote = {
-        price_cents: number;
-        next_price_cents: number;
-        next_change: string | null;
-      };
-
-      const formatLivePrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
-      const formatLiveDate = (value: string | null) => {
-        if (!value) return 'the price cap';
-        return new Intl.DateTimeFormat('en-US', {
-          timeZone: 'UTC',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        }).format(new Date(value));
-      };
-      const isPriceQuote = (value: unknown): value is LivePriceQuote => {
+      const isPriceQuote = (value: unknown): value is PriceQuote => {
         if (typeof value !== 'object' || value === null) return false;
         const quote = value as Record<string, unknown>;
         return (
@@ -221,10 +207,10 @@ const guardrails = [
           const quote = await response.json();
           if (!isPriceQuote(quote)) return;
 
-          if (currentPrice) currentPrice.textContent = formatLivePrice(quote.price_cents);
-          if (nextPrice) nextPrice.textContent = formatLivePrice(quote.next_price_cents);
+          if (currentPrice) currentPrice.textContent = formatPrice(quote.price_cents);
+          if (nextPrice) nextPrice.textContent = formatPrice(quote.next_price_cents);
           if (nextChange) {
-            nextChange.textContent = formatLiveDate(quote.next_change);
+            nextChange.textContent = formatUtcDate(quote.next_change);
             if (quote.next_change) {
               nextChange.setAttribute('datetime', quote.next_change);
             } else {
